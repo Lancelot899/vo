@@ -7,13 +7,16 @@
 class Frame
 {
 public:
-    Frame(cv::Mat img);
+    Frame(cv::Mat img, float exposureTime);
+    const float *getImage(int i);
+    const cv::Mat &RGBImg();
 
 private:
     cv::Mat mat;
     float *image[5];
     int width;
     int height;
+    float exposureTime;
 };
 
 #endif // FRAME_H

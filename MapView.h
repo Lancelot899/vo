@@ -7,7 +7,7 @@ class MapView : public QGLViewer
 {
     Q_OBJECT
 public:
-    explicit MapView(QObject *parent = 0);
+    explicit MapView(QWidget* parent=0, const QGLWidget* shareWidget=0, Qt::WindowFlags flags=0);
 
 signals:
 

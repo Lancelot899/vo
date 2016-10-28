@@ -49,11 +49,6 @@ public:
 	  * Corresponds to "delete[] buffer". */
 	void returnBuffer(void* buffer);
 	
-
-	boost::shared_lock<boost::shared_mutex> activateFrame(Frame* frame);
-	void deactivateFrame(Frame* frame);
-	void pruneActiveFrames();
-
 	void releaseBuffes();
 private:
 	FrameMemory();
@@ -63,8 +58,5 @@ private:
 	std::unordered_map< void*, unsigned int > bufferSizes;
 	std::unordered_map< unsigned int, std::vector< void* > > availableBuffers;
 
-
-	boost::mutex activeFramesMutex;
-	std::list<Frame*> activeFrames;
 };
 
