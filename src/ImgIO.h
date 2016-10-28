@@ -3,6 +3,8 @@
 
 #include <deque>
 #include <memory>
+#include <thread>
+
 
 #include <opencv2/opencv.hpp>
 
@@ -24,8 +26,13 @@ public:
     ImgIO(int width = 640, int height = 480, SrcType srcType = SRC_VIDEO, char* imgSrc = nullptr /* img dir */);
 
 private:
+    void getImgFrmCam();
+
+
+private:
     std::deque<std::shared_ptr<Frame>>  frameQuque;
     cv::VideoCapture cap;
+    std::thread *camThread;
 };
 
 #endif // IMGIO_H
