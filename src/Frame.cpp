@@ -2,8 +2,14 @@
 
 Frame::Frame(cv::Mat img, float exposureTime)
 {
-    width = img.cols;
-    height = img.rows;
+    width[0] = img.cols;
+    height[0] = img.rows;
+    for(int i = 1; i < 5; ++i) {
+        height[i] = height[i - 1] / 2;
+        width[i] = width[i - 1] / 2;
+    }
+
+
     this->mat = img;
     this->exposureTime = exposureTime;
 }

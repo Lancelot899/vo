@@ -14,8 +14,8 @@ public:
 private:
     cv::Mat mat;
     float *image[5];
-    int width;
-    int height;
+    int width[5];
+    int height[5];
     float exposureTime;
 };
 
