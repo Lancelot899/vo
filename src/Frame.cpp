@@ -1,5 +1,13 @@
 #include "Frame.h"
 
+Frame::Frame()
+{
+    memset(image, 0, sizeof(int) * 5);
+    memset(width, 0, sizeof(int) * 5);
+    memset(height, 0, sizeof(int) * 5);
+    exposureTime = -1.0f;
+}
+
 Frame::Frame(cv::Mat img, float exposureTime)
 {
     width[0] = img.cols;
@@ -20,6 +28,10 @@ const float* Frame::getImage(int i)
     return image[i];
 }
 
-inline const cv::Mat &Frame::RGBImg() {
+const cv::Mat &Frame::RGBImg() {
     return mat;
+}
+
+bool Frame::isEmpty() {
+    return mat.empty();
 }

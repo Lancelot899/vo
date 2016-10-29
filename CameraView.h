@@ -8,6 +8,8 @@ class CameraView : public QWidget
     Q_OBJECT
 public:
     explicit CameraView(QWidget *parent = 0);
+    void setImg();
+
 
 signals:
 

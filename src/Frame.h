@@ -7,9 +7,11 @@
 class Frame
 {
 public:
+    Frame();
     Frame(cv::Mat img, float exposureTime);
-    const float *getImage(int i);
+    inline const float *getImage(int i);
     const cv::Mat &RGBImg();
+    inline bool isEmpty();
 
 private:
     cv::Mat mat;
