@@ -3,6 +3,7 @@
 MapView::MapView(QWidget *parent, const QGLWidget *shareWidget, Qt::WindowFlags flags) :
     QGLViewer(parent, shareWidget, flags)
 {
+    setSceneRadius(200);
     points = std::make_shared<std::vector<std::shared_ptr<Eigen::Vector3f>>>();
 }
 
