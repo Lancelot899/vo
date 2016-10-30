@@ -14,7 +14,7 @@ public:
     inline bool isEmpty();
 
 private:
-    cv::Mat mat;
+    cv::Mat rgbImg;
     float *image[5];
     int width[5];
     int height[5];

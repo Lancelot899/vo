@@ -10,7 +10,8 @@ HEADERS += \
     MapView.h \
     src/ImgIO.h \
     src/Frame.h \
-    src/FrameMemory.h
+    src/FrameMemory.h \
+    src/setting.h
 
 SOURCES += \
     MainWidget.cpp \
@@ -19,7 +20,8 @@ SOURCES += \
     src/ImgIO.cpp \
     src/Frame.cpp \
     src/FrameMemory.cpp \
-    main.cpp
+    main.cpp \
+    src/setting.cpp
 
 ################################################################################
 ####################              qglviewer              #######################
