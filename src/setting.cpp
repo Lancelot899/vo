@@ -5,8 +5,6 @@
 
 #include "setting.h"
 
-const char *cfgPath = "./Configue.cfg";
-
 
 class Setting {
 public:
@@ -22,6 +20,7 @@ private:
    static std::unordered_map<char*, float> configueParam;
 };
 
+std::unordered_map<char*, float> Setting::configueParam;
 
 class Camera {
 public:
@@ -40,13 +39,16 @@ public:
         cameraCV_.at<float>(1, 1) = camera_(1, 1) = 1.0f;
     }
 
-    friend const Eigen::Matrix3f& camera();
-    friend const cv::Mat& cameraCV();
+    friend Eigen::Matrix3f& camera();
+    friend cv::Mat& cameraCV();
 
 private:
     static Eigen::Matrix3f camera_;
     static cv::Mat cameraCV_;
 };
+
+Eigen::Matrix3f Camera::camera_;
+cv::Mat Camera::cameraCV_;
 
 class Distortion {
 public:
@@ -63,32 +65,33 @@ public:
             distortion_(i, 0) = distortionCV_.at<float>(i, 0) = dist[i];
     }
 
-    friend const Eigen::Matrix<float, 5, 1> &camDistortion();
-    friend const cv::Mat &camDistortionCV();
+    friend Eigen::Matrix<float, 5, 1> &camDistortion();
+    friend cv::Mat &camDistortionCV();
 
 private:
     static Eigen::Matrix<float, 5, 1> distortion_;
     static cv::Mat distortionCV_;
 };
 
+Eigen::Matrix<float, 5, 1> Distortion::distortion_;
+cv::Mat Distortion::distortionCV_;
 
-
-const Eigen::Matrix3f& camera() {
+Eigen::Matrix3f& camera() {
     return Camera::camera_;
 }
 
-const cv::Mat& cameraCV() {
+cv::Mat& cameraCV() {
     return Camera::cameraCV_;
 }
 
 
-const Eigen::Matrix<float, 5, 1> &camDistortion()
+Eigen::Matrix<float, 5, 1> &camDistortion()
 {
     return Distortion::distortion_;
 }
 
 
-const cv::Mat &camDistortionCV()
+cv::Mat &camDistortionCV()
 {
     return Distortion::distortionCV_;
 }
@@ -104,11 +107,13 @@ float getVal(char *index)
 }
 
 
-void getConfigueParam() {
+void getConfigueParam(const char *cfgPath) {
     char *buffer = new char[128];
     memset(buffer, 0, 128);
 
     std::fstream f(cfgPath);
+    assert(f.is_open() == true);
+
     f.getline(buffer, 128);
 
     while(strlen(buffer)) {

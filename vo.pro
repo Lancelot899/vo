@@ -11,7 +11,8 @@ HEADERS += \
     src/ImgIO.h \
     src/Frame.h \
     src/FrameMemory.h \
-    src/setting.h
+    src/setting.h \
+    src/voSystem.h
 
 SOURCES += \
     MainWidget.cpp \
@@ -21,7 +22,13 @@ SOURCES += \
     src/Frame.cpp \
     src/FrameMemory.cpp \
     main.cpp \
-    src/setting.cpp
+    src/setting.cpp \
+    src/voSystem.cpp
+
+################################################################################
+####################              boost                  #######################
+################################################################################
+LIBS += /usr/lib/x86_64-linux-gnu/libboost_thread.so
 
 ################################################################################
 ####################              qglviewer              #######################
