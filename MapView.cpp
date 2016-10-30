@@ -16,5 +16,4 @@ void MapView::draw()
         glVertex3f((*(*it))(0), (*(*it))(1), (*(*it))(2));
     }
     glEnd();
->>>>>>> 0016503bacce11c2cb066a090e446566290684cb
 }
