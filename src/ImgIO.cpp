@@ -8,9 +8,11 @@ ImgIO::ImgIO(int width, int height, SrcType srcType, char* )
     if(srcType == SRC_VIDEO) {
         cap.set(CV_CAP_PROP_FRAME_WIDTH, width);
         cap.set(CV_CAP_PROP_FRAME_HEIGHT, height);
+        cap.open(0);
+        assert(cap.isOpened());
+        camThread = new std::thread(std::bind(&ImgIO::getImgFrmCam, this));
     }
 
-    camThread = new std::thread(std::bind(&ImgIO::getImgFrmCam, this));
 }
 
 const std::shared_ptr<Frame> ImgIO::getFrame()

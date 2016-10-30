@@ -17,6 +17,8 @@ class MainWidget : public QWidget
 public:
     explicit MainWidget(QWidget *parent = 0);
 
+    void paintEvent(QPaintEvent *);
+
 signals:
 
 public slots:
@@ -29,7 +31,6 @@ private:
     std::shared_ptr<MapView>    mapView;
     QPushButton                 *btnStart;
     QPushButton                 *btnCamView;
-    bool                        isCamViewShow;
 };
 
 #endif // MAINWIDGET_H
