@@ -47,6 +47,7 @@ LIBS += -L/opt/opencv-2.4.9/lib -lopencv_calib3d -lopencv_contrib \
 INCLUDEPATH += /usr/local/include/g2o/core/
 INCLUDEPATH += /usr/include/suitesparse
 INCLUDEPATH += /usr/local/include/eigen3
+INCLUDEPATH += /usr/include/eigen3
 
 LIBS += /usr/lib/x86_64-linux-gnu/libcholmod.so.2.1.2
 LIBS += -lg2o_core -lg2o_cli -lg2o_solver_cholmod -lg2o_parser -lg2o_stuff
