@@ -107,8 +107,10 @@ float getVal(char *index)
 void getConfigueParam() {
     char *buffer = new char[128];
     memset(buffer, 0, 128);
+
     std::fstream f(cfgPath);
     f.getline(buffer, 128);
+
     while(strlen(buffer)) {
         if(strstr(buffer, "# camera param")) {
             f.getline(buffer, 128);
