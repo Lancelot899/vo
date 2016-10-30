@@ -1,5 +1,6 @@
 #include "ImgIO.h"
 #include "Frame.h"
+#include "setting.h"
 
 
 ImgIO::ImgIO(int width, int height, SrcType srcType, char* )
@@ -32,7 +33,8 @@ void ImgIO::getImgFrmCam()
     float exposureTime = cap.get(CV_CAP_PROP_EXPOSURE);
 
     //! distortion correction
+    cv::Mat img;
+    cv::undistort(mat, img, cameraCV(), camDistortionCV());
 
-
-    frameQuque.push_back(std::shared_ptr<Frame>(new Frame(mat, exposureTime)));
+    frameQuque.push_back(std::shared_ptr<Frame>(new Frame(img, exposureTime)));
 }

@@ -18,7 +18,7 @@ Frame::Frame(cv::Mat img, float exposureTime)
     }
 
 
-    this->mat = img;
+    this->rgbImg = img;
     this->exposureTime = exposureTime;
 }
 
@@ -29,9 +29,9 @@ const float* Frame::getImage(int i)
 }
 
 const cv::Mat &Frame::RGBImg() {
-    return mat;
+    return rgbImg;
 }
 
 bool Frame::isEmpty() {
-    return mat.empty();
+    return rgbImg.empty();
 }

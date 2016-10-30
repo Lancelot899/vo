@@ -5,12 +5,12 @@
 #include <Eigen/Dense>
 
 
-inline const Eigen::Matrix3f& camera();
-inline const cv::Mat& cameraCV();
-inline const Eigen::Matrix<float, 5, 1>& camDistortion();
-inline const cv::Mat& camDistortionCV();
+Eigen::Matrix3f& camera();
+cv::Mat& cameraCV();
+Eigen::Matrix<float, 5, 1>& camDistortion();
+cv::Mat& camDistortionCV();
 
-inline float getVal(char* index);
-void getConfigueParam();
+float getVal(char* index);
+void getConfigueParam(const char *cfgPath = "./Configue.cfg");
 
 #endif // SETTING_H
