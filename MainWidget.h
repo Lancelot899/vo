@@ -2,7 +2,9 @@
 #define MAINWIDGET_H
 
 #include <memory>
+
 #include <QWidget>
+#include <QPushButton>
 
 class voSystem;
 class MapView;
@@ -18,11 +20,16 @@ public:
 signals:
 
 public slots:
+    void actStart();
+    void actCamShow();
 
 private:
     std::shared_ptr<voSystem>   system;
     std::shared_ptr<CameraView> cameraView;
     std::shared_ptr<MapView>    mapView;
+    QPushButton                 *btnStart;
+    QPushButton                 *btnCamView;
+    bool                        isCamViewShow;
 };
 
 #endif // MAINWIDGET_H
