@@ -1,12 +1,16 @@
 #ifndef VOSYSTEM_H
 #define VOSYSTEM_H
 
-#include <deque>
+#include <vector>
 #include <memory>
 
 #include <boost/thread.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
+
+#include <opencv2/opencv.hpp>
+
+#include <Eigen/Dense>
 
 class ImgIO;
 class Frame;
@@ -15,6 +19,10 @@ class voSystem {
 public:
     voSystem();
     bool running();
+
+
+    int getImage(cv::Mat &input);
+    int getPoints(std::shared_ptr<std::vector<std::shared_ptr<Eigen::Vector3f>>> &points);
 
 private:
     void tracking();

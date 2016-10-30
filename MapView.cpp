@@ -4,4 +4,17 @@ MapView::MapView(QWidget *parent, const QGLWidget *shareWidget, Qt::WindowFlags 
     QGLViewer(parent, shareWidget, flags)
 {
     setSceneRadius(200);
+    points = std::make_shared<std::vector<std::shared_ptr<Eigen::Vector3f>>>();
+}
+
+void MapView::draw()
+{
+    if(!points->size())
+        return;
+    glBegin(GL_POINTS);
+    for (auto it = points->begin(); it != points->end(); ++it) {
+        glVertex3f((*(*it))(0), (*(*it))(1), (*(*it))(2));
+    }
+    glEnd();
+>>>>>>> 0016503bacce11c2cb066a090e446566290684cb
 }

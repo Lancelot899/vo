@@ -10,13 +10,13 @@ MainWidget::MainWidget(QWidget *parent) :
 {
     btnStart      = new QPushButton;
     btnCamView    = new QPushButton;
-    isCamViewShow = false;
     system        = std::make_shared<voSystem>();
     mapView       = std::make_shared<MapView>();
     cameraView    = std::make_shared<CameraView>();
 
     btnStart->setText("start");
     connect(btnStart, SIGNAL(clicked()), this, SLOT(actStart()));
+    connect(btnCamView, SIGNAL(clicked()), this, SLOT(actCamShow()));
 
     btnCamView->setText("camera show");
 
@@ -30,19 +30,26 @@ MainWidget::MainWidget(QWidget *parent) :
     this->setLayout(mainLayout);
 }
 
+void MainWidget::paintEvent(QPaintEvent *)
+{
+    cv::Mat currentImage;
+    system->getImage(currentImage);
+    cameraView->setImg(currentImage);
+
+    system->getPoints(mapView->getPoints());
+
+}
+
 void MainWidget::actStart()
 {
     cameraView->show();
-    isCamViewShow = true;
     system->running();
 }
 
 void MainWidget::actCamShow()
 {
-    if(isCamViewShow == true)
-        cameraView->hide();
-    else
+    if(cameraView->isHidden())
         cameraView->show();
-
-    isCamViewShow = !isCamViewShow;
+    else
+        cameraView->hide();
 }
