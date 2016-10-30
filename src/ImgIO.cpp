@@ -36,5 +36,5 @@ void ImgIO::getImgFrmCam()
     cv::Mat img;
     cv::undistort(mat, img, cameraCV(), camDistortionCV());
 
-    frameQuque.push_back(std::shared_ptr<Frame>(new Frame(img, exposureTime)));
+    frameQuque.push_back(std::make_shared<Frame>(img, exposureTime));
 }

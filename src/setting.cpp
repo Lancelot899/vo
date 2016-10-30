@@ -130,6 +130,7 @@ void getConfigueParam(const char *cfgPath) {
         f.getline(buffer, 128);
     }
 
+    f.close();
 }
 
 

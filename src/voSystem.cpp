@@ -7,11 +7,12 @@
 
 voSystem::voSystem()
 {
-    imgIO = std::make_shared<ImgIO>();
+
 }
 
 bool voSystem::running()
 {
+    imgIO = std::make_shared<ImgIO>();
     trackThread = new boost::thread(std::bind(&voSystem::tracking, this));
     optThread = new boost::thread(std::bind(&voSystem::optimize, this));
 
