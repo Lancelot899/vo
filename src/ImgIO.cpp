@@ -27,16 +27,18 @@ const std::shared_ptr<Frame> ImgIO::getFrame()
 
 void ImgIO::getImgFrmCam()
 {
-    if(frameQuque.size() > 7)
-        frameQuque.pop_front();
+    while (true) {
+        if(frameQuque.size() > 7)
+            frameQuque.pop_front();
 
-    cv::Mat mat;
-    cap >> mat;
-    float exposureTime = cap.get(CV_CAP_PROP_EXPOSURE);
+        cv::Mat mat;
+        cap >> mat;
+        float exposureTime =1;// cap.get(CV_CAP_PROP_EXPOSURE);
 
-    //! distortion correction
-    cv::Mat img;
-    cv::undistort(mat, img, cameraCV(), camDistortionCV());
+        //! distortion correction
+        cv::Mat img;
+        cv::undistort(mat, img, cameraCV(), camDistortionCV());
 
-    frameQuque.push_back(std::make_shared<Frame>(img, exposureTime));
+        frameQuque.push_back(std::make_shared<Frame>(img, exposureTime));
+    }
 }

@@ -24,8 +24,11 @@ public:
     };
 
     ImgIO(int width = 640, int height = 480, SrcType srcType = SRC_VIDEO, char* imgSrc = nullptr /* img dir */);
-    inline const std::shared_ptr<Frame> getFrame();
+    const std::shared_ptr<Frame> getFrame();
 
+    size_t getDequeSize(){
+        return frameQuque.size();
+    }
 
 private:
     void getImgFrmCam();

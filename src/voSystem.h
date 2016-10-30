@@ -27,9 +27,13 @@ public:
 private:
     void tracking();
     void optimize();
+    void grapframe();
+
+    void systemUpdate();
 
 private:
     std::shared_ptr<ImgIO> imgIO;
+
     boost::thread          *trackThread;
     boost::thread          *optThread;
 

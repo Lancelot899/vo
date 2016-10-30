@@ -19,14 +19,20 @@ bool voSystem::running()
     return true;
 }
 
+
 int voSystem::getImage(cv::Mat &input)
 {
     if(currentFrame.get() != nullptr) {
+
         input = currentFrame->RGBImg();
         return 0;
     }
+    else {
+        printf("currentFrame.get() == nullptr!\n");
+        return -1;
+    }
 
-    return -1;
+
 }
 
 int voSystem::getPoints(std::shared_ptr<std::vector<std::shared_ptr<Eigen::Vector3f>>> &points)
@@ -46,9 +52,20 @@ int voSystem::getPoints(std::shared_ptr<std::vector<std::shared_ptr<Eigen::Vecto
 void voSystem::tracking()
 {
     printf("tracking!\n");
+
+    while (true) {
+        if(imgIO->getDequeSize()>1)
+            systemUpdate();
+        else std::cout<<imgIO->getDequeSize()<<"\n";
+    }
 }
 
 void voSystem::optimize()
 {
     printf("optimize!\n");
+}
+
+void voSystem::systemUpdate()
+{
+    currentFrame = imgIO->getFrame();
 }

@@ -11,7 +11,7 @@ public:
     Frame(cv::Mat img, float exposureTime);
     inline const float *getImage(int i);
     const cv::Mat &RGBImg();
-    inline bool isEmpty();
+    bool isEmpty();
 
 private:
     cv::Mat rgbImg;

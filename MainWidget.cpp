@@ -27,6 +27,8 @@ MainWidget::MainWidget(QWidget *parent) :
     cameraView->setFixedSize(640, 480);
     cameraView->setWindowTitle("camera view");
 
+
+    grapFrame = new boost::thread(std::bind(&MainWidget::refresh_, this));
     this->setLayout(mainLayout);
 }
 
@@ -34,10 +36,10 @@ void MainWidget::paintEvent(QPaintEvent *)
 {
     cv::Mat currentImage;
     system->getImage(currentImage);
-    cameraView->setImg(currentImage);
+    if(!currentImage.empty())
+        cameraView->setImg(currentImage);
 
     system->getPoints(mapView->getPoints());
-
 }
 
 void MainWidget::actStart()
