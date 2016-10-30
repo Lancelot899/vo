@@ -15,7 +15,7 @@ ImgIO::ImgIO(int width, int height, SrcType srcType, char* )
 
 }
 
-const std::shared_ptr<Frame> ImgIO::getFrame()
+std::shared_ptr<Frame> ImgIO::getFrame()
 {
     if(frameQuque.empty())
         return std::shared_ptr<Frame>(new Frame());

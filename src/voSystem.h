@@ -20,7 +20,7 @@ public:
     voSystem();
     bool running();
 
-
+    std::shared_ptr<Frame>& getCurrentFrame();
     int getImage(cv::Mat &input);
     int getPoints(std::shared_ptr<std::vector<std::shared_ptr<Eigen::Vector3f>>> &points);
 

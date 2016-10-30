@@ -1,16 +1,20 @@
 #ifndef CAMERAVIEW_H
 #define CAMERAVIEW_H
 
+#include <memory>
+
 #include <QWidget>
 #include <opencv2/opencv.hpp>
 
+
+class Frame;
 
 class CameraView : public QWidget
 {
     Q_OBJECT
 public:
     explicit CameraView(QWidget *parent = 0);
-    void setImg(cv::Mat &img);
+    void setFrame(std::shared_ptr<Frame>& currentFrame);
     void paintEvent(QPaintEvent *);
 
 signals:
@@ -18,7 +22,7 @@ signals:
 public slots:
 
 private:
-    cv::Mat Img_;
+    std::shared_ptr<Frame> *currentFrame_;
 };
 
 #endif // CAMERAVIEW_H

@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <QApplication>
 #include "voSystem.h"
 
 #include "ImgIO.h"
@@ -17,6 +17,11 @@ bool voSystem::running()
     optThread = new boost::thread(std::bind(&voSystem::optimize, this));
 
     return true;
+}
+
+std::shared_ptr<Frame> &voSystem::getCurrentFrame()
+{
+    return currentFrame;
 }
 
 int voSystem::getImage(cv::Mat &input)
@@ -45,7 +50,13 @@ int voSystem::getPoints(std::shared_ptr<std::vector<std::shared_ptr<Eigen::Vecto
 
 void voSystem::tracking()
 {
-    printf("tracking!\n");
+    while(true) {
+        {
+            boost::unique_lock<boost::shared_mutex> lock(currentFrameMutex);
+            std::shared_ptr<Frame> frame = imgIO->getFrame();
+            currentFrame.swap(frame);
+        }
+    }
 }
 
 void voSystem::optimize()

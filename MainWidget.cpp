@@ -26,6 +26,8 @@ MainWidget::MainWidget(QWidget *parent) :
     mainLayout->addWidget(btnStart, 3, 2, 1, 1);
     cameraView->setFixedSize(640, 480);
     cameraView->setWindowTitle("camera view");
+    cameraView->setFrame(system->getCurrentFrame());
+
 
     this->setLayout(mainLayout);
 }
@@ -34,8 +36,6 @@ void MainWidget::paintEvent(QPaintEvent *)
 {
     cv::Mat currentImage;
     system->getImage(currentImage);
-    cameraView->setImg(currentImage);
-
     system->getPoints(mapView->getPoints());
 
 }
