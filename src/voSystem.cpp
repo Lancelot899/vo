@@ -1,18 +1,21 @@
 #include <stdio.h>
 #include <QApplication>
-#include "voSystem.h"
 
+
+#include "voSystem.h"
+#include "Optimization.h"
 #include "ImgIO.h"
 #include "Frame.h"
 
 voSystem::voSystem():sysNeedUpdate(false)
 {
-
 }
 
 bool voSystem::running()
 {
     imgIO = std::make_shared<ImgIO>();
+    optimizer = std::make_shared<Optimizater>();
+
     trackThread = new boost::thread(std::bind(&voSystem::tracking, this));
     optThread = new boost::thread(std::bind(&voSystem::optimize, this));
 
@@ -26,6 +29,7 @@ std::shared_ptr<Frame> &voSystem::getCurrentFrame()
 
 const cv::Mat &voSystem::getImage(void)
 {
+    boost::shared_lock<boost::shared_mutex> lock(currentFrameMutex);
     if(currentFrame.get() != nullptr) {
         return currentFrame->RGBImg();
     }

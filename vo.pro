@@ -12,7 +12,8 @@ HEADERS += \
     src/Frame.h \
     src/FrameMemory.h \
     src/setting.h \
-    src/voSystem.h
+    src/voSystem.h \
+    src/Optimization.h
 
 SOURCES += \
     MainWidget.cpp \
@@ -23,7 +24,8 @@ SOURCES += \
     src/FrameMemory.cpp \
     main.cpp \
     src/setting.cpp \
-    src/voSystem.cpp
+    src/voSystem.cpp \
+    src/Optimization.cpp
 
 ################################################################################
 ####################              boost                  #######################

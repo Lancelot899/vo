@@ -15,6 +15,7 @@
 
 class ImgIO;
 class Frame;
+class Optimizater;
 
 class voSystem {
 public:
@@ -32,18 +33,16 @@ private:
     void optimize();
 
 private:
-    std::shared_ptr<ImgIO> imgIO;
+    std::shared_ptr<ImgIO>         imgIO;
+    std::shared_ptr<Optimizater>   optimizer;
 
     boost::thread          *trackThread;
     boost::thread          *optThread;
 
-    boost::shared_mutex    currentFrameMutex;
-    std::shared_ptr<Frame> currentFrame;
+    std::atomic<std::shared_ptr<Frame>> currentFrame;
 
     boost::shared_mutex    keyFramesMutex;
     std::shared_ptr<Frame> keyFrames;
-
-    std::atomic<bool>      sysNeedUpdate;
 };
 
 #endif // VOSYSTEM_H
