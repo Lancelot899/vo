@@ -23,7 +23,7 @@ public:
     explicit MainWidget(QWidget *parent = 0);
 
     void paintEvent(QPaintEvent *);
-    void timerEvent(QTimerEvent *ev);
+    void timerEvent(QTimerEvent *);
 
 signals:
 

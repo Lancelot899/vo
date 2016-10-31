@@ -35,15 +35,15 @@ void MainWidget::paintEvent(QPaintEvent *)
 {
 //    cv::Mat currentImage;
 //    system->getImage(currentImage);
-    if(system->queryUpdate()){
+    if(system->isCurrentFrameBusy()){
         cameraView->setImage(system->getImage());
-        system->resetSysUpdate();
+        system->setCurrentFrameBusy();
     }
 
     system->getPoints(mapView->getPoints());
 }
 
-void MainWidget::timerEvent(QTimerEvent *ev)
+void MainWidget::timerEvent(QTimerEvent *)
 {
     update();
 }

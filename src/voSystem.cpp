@@ -5,7 +5,7 @@
 #include "ImgIO.h"
 #include "Frame.h"
 
-voSystem::voSystem():sysNeedUpdate(false)
+voSystem::voSystem():isCurrentFrameBusy_(false)
 {
 
 }
@@ -24,7 +24,7 @@ std::shared_ptr<Frame> &voSystem::getCurrentFrame()
     return currentFrame;
 }
 
-const cv::Mat &voSystem::getImage(void)
+const cv::Mat voSystem::getImage(void)
 {
     if(currentFrame.get() != nullptr) {
         return currentFrame->RGBImg();
@@ -54,15 +54,14 @@ void voSystem::tracking()
     printf("tracking!\n");
     while(true) {
         {
-            boost::unique_lock<boost::shared_mutex> lock(currentFrameMutex);
             std::shared_ptr<Frame>& frame = imgIO->getFrame();
             if(frame.get() == nullptr){
                 continue;
             }
 
-            if(!sysNeedUpdate){
+            if(!isCurrentFrameBusy_){
                 currentFrame.swap(frame);
-                sysNeedUpdate = true;
+                isCurrentFrameBusy_ = true;
             }
         }
     }

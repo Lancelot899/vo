@@ -22,11 +22,11 @@ public:
     bool running();
 
     std::shared_ptr<Frame>& getCurrentFrame();
-    const cv::Mat &getImage(void);
+    const cv::Mat getImage(void);
     int getPoints(std::shared_ptr<std::vector<std::shared_ptr<Eigen::Vector3f>>> &points);
 
-    bool queryUpdate()       { return sysNeedUpdate; }
-    void resetSysUpdate()    { sysNeedUpdate = false; }
+    bool isCurrentFrameBusy()       { return isCurrentFrameBusy_; }
+    void setCurrentFrameBusy(bool isBusy = false)    { isCurrentFrameBusy_ = isBusy; }
 private:
     void tracking();
     void optimize();
@@ -37,13 +37,11 @@ private:
     boost::thread          *trackThread;
     boost::thread          *optThread;
 
-    boost::shared_mutex    currentFrameMutex;
+    std::atomic<bool>      isCurrentFrameBusy_;
     std::shared_ptr<Frame> currentFrame;
 
     boost::shared_mutex    keyFramesMutex;
     std::shared_ptr<Frame> keyFrames;
-
-    std::atomic<bool>      sysNeedUpdate;
 };
 
 #endif // VOSYSTEM_H
