@@ -2,7 +2,6 @@
 #define FRAME_H
 
 #include <opencv2/opencv.hpp>
-
 #include <memory>
 
 class Frame

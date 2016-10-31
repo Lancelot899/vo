@@ -58,11 +58,11 @@ public:
 
         float dist[5];
         sscanf(param, "[%f %f %f %f %f]", &dist[0], &dist[1], &dist[2], &dist[3], &dist[4]);
-        distortionCV_.create(5, 1, CV_32FC1);
+        distortionCV_.create(1, 5, CV_32FC1);
         memset(distortionCV_.data, 0, 5 * 1 *sizeof(float));
 
         for(int i = 0; i < 5; ++i)
-            distortion_(i, 0) = distortionCV_.at<float>(i, 0) = dist[i];
+            distortion_(i, 0) = distortionCV_.at<float>(0, i) = dist[i];
     }
 
     friend Eigen::Matrix<float, 5, 1> &camDistortion();

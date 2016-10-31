@@ -44,8 +44,8 @@ void ImgIO::getImgFrmCam()
         //! distortion correction
         cv::Mat img = mat;
         cv::undistort(mat, img, cameraCV(), camDistortionCV());
+
         std::shared_ptr<Frame> frame = std::make_shared<Frame>(img, exposureTime);
-        //std::cout << "frame::rgbImg.cols" << frame->RGBImg().cols << std::endl;
         frameQuque.push_back(frame);
         conditionVar.notify_all();
     }

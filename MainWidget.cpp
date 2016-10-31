@@ -33,8 +33,6 @@ MainWidget::MainWidget(QWidget *parent) :
 
 void MainWidget::paintEvent(QPaintEvent *)
 {
-//    cv::Mat currentImage;
-//    system->getImage(currentImage);
     if(system->isCurrentFrameBusy()){
         cameraView->setImage(system->getImage());
         system->setCurrentFrameBusy();

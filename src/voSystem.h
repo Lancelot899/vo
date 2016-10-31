@@ -39,12 +39,8 @@ private:
     boost::thread          *trackThread;
     boost::thread          *optThread;
 
-<<<<<<< HEAD
-    std::atomic<std::shared_ptr<Frame>> currentFrame;
-=======
     std::atomic<bool>      isCurrentFrameBusy_;
     std::shared_ptr<Frame> currentFrame;
->>>>>>> c7236124d24d18d5bbff733cb94a5c42b0afa59d
 
     boost::shared_mutex    keyFramesMutex;
     std::shared_ptr<Frame> keyFrames;

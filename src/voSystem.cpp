@@ -29,7 +29,6 @@ std::shared_ptr<Frame> &voSystem::getCurrentFrame()
 
 const cv::Mat voSystem::getImage(void)
 {
-    boost::shared_lock<boost::shared_mutex> lock(currentFrameMutex);
     if(currentFrame.get() != nullptr) {
         return currentFrame->RGBImg();
     }
