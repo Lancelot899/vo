@@ -36,7 +36,7 @@ public:
         cameraCV_.at<float>(0, 2) = camera_(0, 2) = cx;
         cameraCV_.at<float>(1, 1) = camera_(1, 1) = fy;
         cameraCV_.at<float>(1, 2) = camera_(1, 2) = cy;
-        cameraCV_.at<float>(1, 1) = camera_(1, 1) = 1.0f;
+        cameraCV_.at<float>(2, 2) = camera_(2, 2) = 1.0f;
     }
 
     friend Eigen::Matrix3f& camera();
@@ -115,7 +115,6 @@ void getConfigueParam(const char *cfgPath) {
     assert(f.is_open() == true);
 
     f.getline(buffer, 128);
-
     while(strlen(buffer)) {
         if(strstr(buffer, "# camera param")) {
             f.getline(buffer, 128);
@@ -127,9 +126,11 @@ void getConfigueParam(const char *cfgPath) {
             Distortion::setDistortion(buffer);
         }
 
+        memset(buffer, 0, 128);
         f.getline(buffer, 128);
     }
 
+    delete[]buffer;
     f.close();
 }
 

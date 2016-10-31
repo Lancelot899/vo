@@ -42,7 +42,7 @@ void ImgIO::getImgFrmCam()
         float exposureTime =1;// cap.get(CV_CAP_PROP_EXPOSURE);
 
         //! distortion correction
-        cv::Mat img = mat;
+        cv::Mat img;
         cv::undistort(mat, img, cameraCV(), camDistortionCV());
 
         std::shared_ptr<Frame> frame = std::make_shared<Frame>(img, exposureTime);
