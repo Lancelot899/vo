@@ -1,11 +1,11 @@
 #include <stdio.h>
-
+#include <QApplication>
 #include "voSystem.h"
 
 #include "ImgIO.h"
 #include "Frame.h"
 
-voSystem::voSystem()
+voSystem::voSystem():sysNeedUpdate(false)
 {
 
 }
@@ -19,20 +19,20 @@ bool voSystem::running()
     return true;
 }
 
+std::shared_ptr<Frame> &voSystem::getCurrentFrame()
+{
+    return currentFrame;
+}
 
-int voSystem::getImage(cv::Mat &input)
+const cv::Mat &voSystem::getImage(void)
 {
     if(currentFrame.get() != nullptr) {
-
-        input = currentFrame->RGBImg();
-        return 0;
+        return currentFrame->RGBImg();
     }
     else {
         printf("currentFrame.get() == nullptr!\n");
-        return -1;
+        return cv::Mat();
     }
-
-
 }
 
 int voSystem::getPoints(std::shared_ptr<std::vector<std::shared_ptr<Eigen::Vector3f>>> &points)
@@ -52,11 +52,19 @@ int voSystem::getPoints(std::shared_ptr<std::vector<std::shared_ptr<Eigen::Vecto
 void voSystem::tracking()
 {
     printf("tracking!\n");
+    while(true) {
+        {
+            boost::unique_lock<boost::shared_mutex> lock(currentFrameMutex);
+            std::shared_ptr<Frame>& frame = imgIO->getFrame();
+            if(frame.get() == nullptr){
+                continue;
+            }
 
-    while (true) {
-        if(imgIO->getDequeSize()>1)
-            systemUpdate();
-        else std::cout<<imgIO->getDequeSize()<<"\n";
+            if(!sysNeedUpdate){
+                currentFrame.swap(frame);
+                sysNeedUpdate = true;
+            }
+        }
     }
 }
 
@@ -65,7 +73,3 @@ void voSystem::optimize()
     printf("optimize!\n");
 }
 
-void voSystem::systemUpdate()
-{
-    currentFrame = imgIO->getFrame();
-}

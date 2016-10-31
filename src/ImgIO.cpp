@@ -2,7 +2,6 @@
 #include "Frame.h"
 #include "setting.h"
 
-
 ImgIO::ImgIO(int width, int height, SrcType srcType, char* )
 {
     if(srcType == SRC_VIDEO) {
@@ -15,14 +14,21 @@ ImgIO::ImgIO(int width, int height, SrcType srcType, char* )
 
 }
 
-const std::shared_ptr<Frame> ImgIO::getFrame()
+std::shared_ptr<Frame> &ImgIO::getFrame()
 {
-    if(frameQuque.empty())
-        return std::shared_ptr<Frame>(new Frame());
+    std::unique_lock<std::mutex> lock(curFrameMutex);
 
-    std::shared_ptr<Frame> frame = frameQuque.back();
-    frameQuque.pop_back();
-    return frame;
+    if(frameQuque.empty()) {
+        conditionVar.wait(lock);
+    }
+
+    else {
+        std::shared_ptr<Frame> frame = frameQuque.front();
+        curFrame.swap(frame);
+        frameQuque.pop_front();
+//        std::cout<<curFrame->RGBImg().cols<<" "<<curFrame->RGBImg().rows<<"\n";
+    }
+    return curFrame;
 }
 
 void ImgIO::getImgFrmCam()
@@ -38,7 +44,9 @@ void ImgIO::getImgFrmCam()
         //! distortion correction
         cv::Mat img;
         cv::undistort(mat, img, cameraCV(), camDistortionCV());
-
-        frameQuque.push_back(std::make_shared<Frame>(img, exposureTime));
+        std::shared_ptr<Frame> frame = std::make_shared<Frame>(img, exposureTime);
+        //std::cout << "frame::rgbImg.cols" << frame->RGBImg().cols << std::endl;
+        frameQuque.push_back(frame);
+        conditionVar.notify_all();
     }
 }

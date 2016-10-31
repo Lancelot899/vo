@@ -10,6 +10,7 @@
 #include <QWidget>
 #include <QPushButton>
 
+
 class voSystem;
 class MapView;
 class CameraView;
@@ -22,14 +23,7 @@ public:
     explicit MainWidget(QWidget *parent = 0);
 
     void paintEvent(QPaintEvent *);
-
-    void refresh_(){
-        while (true) {
-            update();
-            usleep(2000);
-        }
-
-    }
+    void timerEvent(QTimerEvent *ev);
 
 signals:
 

@@ -17,7 +17,6 @@ Frame::Frame(cv::Mat img, float exposureTime)
         width[i] = width[i - 1] / 2;
     }
 
-
     this->rgbImg = img;
     this->exposureTime = exposureTime;
 }

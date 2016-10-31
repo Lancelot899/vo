@@ -8,6 +8,7 @@
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
 
+#include <atomic>
 #include <opencv2/opencv.hpp>
 
 #include <Eigen/Dense>
@@ -20,16 +21,15 @@ public:
     voSystem();
     bool running();
 
-
-    int getImage(cv::Mat &input);
+    std::shared_ptr<Frame>& getCurrentFrame();
+    const cv::Mat &getImage(void);
     int getPoints(std::shared_ptr<std::vector<std::shared_ptr<Eigen::Vector3f>>> &points);
 
+    bool queryUpdate()       { return sysNeedUpdate; }
+    void resetSysUpdate()    { sysNeedUpdate = false; }
 private:
     void tracking();
     void optimize();
-    void grapframe();
-
-    void systemUpdate();
 
 private:
     std::shared_ptr<ImgIO> imgIO;
@@ -42,6 +42,8 @@ private:
 
     boost::shared_mutex    keyFramesMutex;
     std::shared_ptr<Frame> keyFrames;
+
+    std::atomic<bool>      sysNeedUpdate;
 };
 
 #endif // VOSYSTEM_H
