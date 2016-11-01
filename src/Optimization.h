@@ -18,7 +18,7 @@ public:
     };
 
     Optimizater(OPT_TYPE optType = OPT_DEFAULT);
-    bool forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame);
+    bool forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame, float ai = 0.0f, float aj = 0.0f, float bi = 0.0f, float bj = 0.0f);
     bool forKeyFrame(std::deque<std::shared_ptr<Frame>> keyFrames);
 
 

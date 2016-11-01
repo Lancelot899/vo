@@ -98,7 +98,7 @@ struct JacKff {
 
 
 
-inline Jac calcJac(std::shared_ptr<Frame>& frame_i, std::shared_ptr<Frame>& frame_j) {
+inline Jac calcJac(std::shared_ptr<Frame>& frame_i, std::shared_ptr<Frame>& frame_j, float ai, float aj, float bi, float bj) {
     Jac jac;
 
 }
@@ -106,11 +106,11 @@ inline Jac calcJac(std::shared_ptr<Frame>& frame_i, std::shared_ptr<Frame>& fram
 
 class OptimizaterImpl {
 public:
-    virtual bool forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame);
+    virtual bool forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame, float ai = 0.0f, float aj = 0.0f, float bi = 0.0f, float bj = 0.0f);
     virtual bool forKeyFrame(std::deque<std::shared_ptr<Frame> > keyFrames);
 };
 
-bool OptimizaterImpl::forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame) {
+bool OptimizaterImpl::forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame, float ai, float aj, float bi, float bj) {
     return true;
 }
 
@@ -126,7 +126,7 @@ bool OptimizaterImpl::forKeyFrame(std::deque<std::shared_ptr<Frame> > keyFrames)
 
 class OptimizaterImplG2O : public OptimizaterImpl {
 public:
-    bool forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame);
+    bool forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame, float ai = 0.0f, float aj = 0.0f, float bi = 0.0f, float bj = 0.0f);
     bool forKeyFrame(std::deque<std::shared_ptr<Frame> > keyFrames);
 };
 
@@ -135,7 +135,7 @@ bool OptimizaterImplG2O::forKeyFrame(std::deque<std::shared_ptr<Frame> > keyFram
 }
 
 
-bool OptimizaterImplG2O::forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame) {
+bool OptimizaterImplG2O::forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame, float ai, float aj, float bi, float bj) {
     return true;
 }
 
@@ -146,7 +146,7 @@ bool OptimizaterImplG2O::forTracking(std::shared_ptr<Frame> kFrame, std::shared_
 
 class OptimizaterImplCeres : public OptimizaterImpl {
 public:
-    bool forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame);
+    bool forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame, float ai = 0.0f, float aj = 0.0f, float bi = 0.0f, float bj = 0.0f);
     bool forKeyFrame(std::deque<std::shared_ptr<Frame> > keyFrames);
 };
 
@@ -155,7 +155,7 @@ bool OptimizaterImplCeres::forKeyFrame(std::deque<std::shared_ptr<Frame> > keyFr
     return true;
 }
 
-bool OptimizaterImplCeres::forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame) {
+bool OptimizaterImplCeres::forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame, float ai, float aj, float bi, float bj) {
     return true;
 }
 
@@ -182,12 +182,13 @@ Optimizater::Optimizater(OPT_TYPE optType)
     }
 }
 
-bool Optimizater::forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame)
+bool Optimizater::forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame, float ai, float aj, float bi, float bj)
 {
-    return impl->forTracking(kFrame, frame);
+    return impl->forTracking(kFrame, frame, ai, aj, bi, bj);
 }
 
 bool Optimizater::forKeyFrame(std::deque<std::shared_ptr<Frame> > keyFrames)
 {
     return impl->forKeyFrame(keyFrames);
 }
+
