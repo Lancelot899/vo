@@ -106,6 +106,26 @@ float getVal(char *index)
     return it->second;
 }
 
+class DepthRandom{
+public:
+    typedef boost::random::variate_generator<boost::random::mt19937, boost::random::normal_distribution<float> > randGenType;
+
+public:
+    static randGenType& getRandom() {
+        static randGenType random_(engine, distribution);
+        return random_;
+    }
+
+private:
+    static boost::random::normal_distribution<float> distribution;
+    static boost::random::mt19937 engine;
+
+};
+
+boost::random::normal_distribution<float> DepthRandom::distribution(INIT_DEPTH_MEANS, MAX_VAR);
+boost::random::mt19937 DepthRandom::engine;
+
+
 
 void getConfigueParam(const char *cfgPath) {
     char *buffer = new char[128];
@@ -135,4 +155,7 @@ void getConfigueParam(const char *cfgPath) {
 }
 
 
-
+float getInitDepth()
+{
+    return DepthRandom::getRandom()();
+}

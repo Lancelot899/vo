@@ -33,6 +33,7 @@ std::shared_ptr<Frame> &ImgIO::getFrame()
 
 void ImgIO::getImgFrmCam()
 {
+    int id = 0;
     while (true) {
         if(frameQuque.size() > 7)
             frameQuque.pop_front();
@@ -45,7 +46,7 @@ void ImgIO::getImgFrmCam()
         cv::Mat img;
         cv::undistort(mat, img, cameraCV(), camDistortionCV());
 
-        std::shared_ptr<Frame> frame = std::make_shared<Frame>(img, exposureTime);
+        std::shared_ptr<Frame> frame = std::make_shared<Frame>(id++, img, exposureTime);
         frameQuque.push_back(frame);
         conditionVar.notify_all();
     }

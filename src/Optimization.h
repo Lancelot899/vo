@@ -4,7 +4,16 @@
 class Optimizater
 {
 public:
-    Optimizater();
+    enum OPT_TYPE {
+        OPT_DEFAULT,
+        OPT_G2O,
+        OPT_CERES
+    };
+
+    Optimizater(OPT_TYPE optType = OPT_DEFAULT);
+
+private:
+
 };
 
 #endif // OPTIMIZATION_H
