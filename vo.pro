@@ -3,6 +3,7 @@ QT += opengl
 
 
 QMAKE_CXXFLAGS += -std=c++11
+QMAKE_LFLAGS += -Wl,--no-as-needed
 
 HEADERS += \
     MainWidget.h \

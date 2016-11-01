@@ -1,3 +1,5 @@
+#include <thread>
+
 #include "Frame.h"
 
 Frame::Frame()
@@ -12,10 +14,12 @@ Frame::Frame()
     memset(width_, 0, sizeof(int) * 5);
     memset(height_, 0, sizeof(int) * 5);
     exposureTime_ = -1.0f;
+    isPoseBusy = false;
 }
 
 Frame::Frame(int id, cv::Mat img, float exposureTime)
 {
+    isPoseBusy = false;
     this->id = id;
     cv::Mat K = cameraCV();
     fx_ = K.at<float>(0, 0);
@@ -37,6 +41,7 @@ Frame::Frame(int id, cv::Mat img, float exposureTime)
 
 Frame::Frame(int id, cv::Mat img, float exposureTime, Sophus::SE3f &pose)
 {
+    isPoseBusy = false;
     this->id = id;
     cv::Mat K = cameraCV();
     fx_ = K.at<float>(0, 0);
@@ -58,6 +63,7 @@ Frame::Frame(int id, cv::Mat img, float exposureTime, Sophus::SE3f &pose)
 
 Frame::Frame(int id, cv::Mat img, float exposureTime, std::map<int, voPoint> obsPoints)
 {
+    isPoseBusy = false;
     this->id = id;
     cv::Mat K = cameraCV();
     fx_ = K.at<float>(0, 0);
@@ -80,6 +86,7 @@ Frame::Frame(int id, cv::Mat img, float exposureTime, std::map<int, voPoint> obs
 
 Frame::Frame(int id, cv::Mat img, float exposureTime, Sophus::SE3f &pose, std::map<int, voPoint> obsPoints)
 {
+    isPoseBusy = false;
     this->id = id;
     cv::Mat K = cameraCV();
     fx_ = K.at<float>(0, 0);
@@ -128,14 +135,36 @@ const std::map<int, voPoint> &Frame::obsPoints() {return obsPoints_;}
 
 void Frame::setDepth(int u, int v, float val) {
     auto it = obsPoints_.find(u * height_[4] + v);
-    if(it != obsPoints_.end())
+    if(it != obsPoints_.end()) {
+        while((it->second).isDepthBusy == true) std::this_thread::yield();
+        (it->second).isDepthBusy = true;
         (it->second).depth = val;
+        (it->second).isDepthBusy = false;
+    }
+}
+
+void Frame::setPose(Sophus::SE3f &pose) {
+    while(isPoseBusy == true) std::this_thread::yield();
+    isPoseBusy = true;
+    this->pose_ = pose;
+    isPoseBusy = false;
 }
 
 float Frame::getDepth(int u, int v) {
     auto it = obsPoints_.find(u * height_[4] + v);
-    if(it != obsPoints_.end())
+    if(it != obsPoints_.end()) {
+        while((it->second).isDepthBusy == true) std::this_thread::yield();
         return (it->second).depth;
+    }
 
     return -1.0f;
+}
+
+const Sophus::SE3f &Frame::pose() {
+    while(isPoseBusy == true) std::this_thread::yield();
+    return pose_;
+}
+
+float Frame::exposureTime() {
+    return exposureTime_;
 }
