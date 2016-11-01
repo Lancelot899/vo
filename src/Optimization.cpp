@@ -30,6 +30,8 @@ struct Jac {
         rij_bi *= val;
         rij_bj *= val;
         rij_di *= val;
+
+        return *this;
     }
 
     Jac& operator *=(float val) {
@@ -38,6 +40,8 @@ struct Jac {
         rij_bi *= val;
         rij_bj *= val;
         rij_di *= val;
+
+        return *this;
     }
 
 };
@@ -56,12 +60,16 @@ struct JacKf {
         jac *= val;
         rij_xi *= val;
         rij_xj *= val;
+
+        return *this;
     }
 
     JacKf& operator *=(float val) {
         jac *= val;
         rij_xi *= val;
         rij_xj *= val;
+
+        return *this;
     }
 };
 
@@ -76,11 +84,15 @@ struct JacKff {
     JacKff& operator *(float val) {
         jac *= val;
         rij_xij *= val;
+
+        return *this;
     }
 
     JacKff& operator *=(float val) {
         jac *= val;
         rij_xij *= val;
+
+        return *this;
     }
 };
 

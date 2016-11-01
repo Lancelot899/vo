@@ -11,6 +11,8 @@
 
 #include "src/setting.h"
 
+#define IMGINDEX(u, v) (u * height_[4] + v)
+
 class Frame;
 
 struct voPoint {

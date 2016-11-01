@@ -134,7 +134,7 @@ bool Frame::isEmpty() {
 const std::map<int, voPoint> &Frame::obsPoints() {return obsPoints_;}
 
 void Frame::setDepth(int u, int v, float val) {
-    auto it = obsPoints_.find(u * height_[4] + v);
+    auto it = obsPoints_.find(IMGINDEX(u, v));
     if(it != obsPoints_.end()) {
         while((it->second).isDepthBusy == true) std::this_thread::yield();
         (it->second).isDepthBusy = true;
@@ -151,7 +151,7 @@ void Frame::setPose(Sophus::SE3f &pose) {
 }
 
 float Frame::getDepth(int u, int v) {
-    auto it = obsPoints_.find(u * height_[4] + v);
+    auto it = obsPoints_.find(IMGINDEX(u ,v));
     if(it != obsPoints_.end()) {
         while((it->second).isDepthBusy == true) std::this_thread::yield();
         return (it->second).depth;
