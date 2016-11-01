@@ -60,37 +60,38 @@ public:
     Frame(int id, cv::Mat img, float exposureTime, std::map<int, voPoint> obsPoints);
     Frame(int id, cv::Mat img, float exposureTime, Sophus::SE3f &pose, std::map<int, voPoint> obsPoints);
 
-    inline const float *getImage(int i);
     const cv::Mat &RGBImg();
     bool isEmpty();
+
+    const std::map<int, voPoint>& obsPoints();
+    void setDepth(int u, int v, float val);
+    float getDepth(int u, int v);
+
     int getID() { return id; }
-    const std::map<int, voPoint>& getObsPoints() {return obsPoints;}
-    void setDepth(int u, int v, float val) {
-        auto it = obsPoints.find(u * height[4] + v);
-        if(it != obsPoints.end())
-            (it->second).depth = val;
-    }
-
-    float getDepth(int u, int v) {
-        auto it = obsPoints.find(u * height[4] + v);
-        if(it != obsPoints.end())
-            return (it->second).depth;
-
-        return -1.0f;
-    }
+    float fx() { return fx_; }
+    float fy() { return fy_; }
+    float cx() { return cx_; }
+    float cy() { return cy_; }
+    float height() { return height_[4]; }
+    float width() { return width_[4]; }
+    Sophus::SE3f &pose() { return pose_; }
+    float exposureTime() { return exposureTime_; }
+    const float *Image(int i);
+    const Eigen::Vector3f* gradients(int i);
+    const float* maxGradients(int i);
 
 private:
     int id;
-    float fx, fy, cx, cy;
+    float fx_, fy_, cx_, cy_;
     cv::Mat rgbImg;
     float *image[5];
-    Eigen::Vector3f *gradients[5];
-    float *maxGradient[5];
-    int width[5];
-    int height[5];
-    float exposureTime;
-    Sophus::SE3f pose;
-    std::map<int, voPoint> obsPoints;
+    Eigen::Vector3f *gradients_[5];
+    float *maxGradients_[5];
+    int width_[5];
+    int height_[5];
+    float exposureTime_;
+    Sophus::SE3f pose_;
+    std::map<int, voPoint> obsPoints_;
 };
 
 #endif // FRAME_H
