@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <deque>
 
 #include <boost/thread.hpp>
 #include <boost/thread/shared_mutex.hpp>
@@ -42,8 +43,10 @@ private:
     std::atomic<bool>      isCurrentFrameBusy_;
     std::shared_ptr<Frame> currentFrame;
 
-    boost::shared_mutex    keyFramesMutex;
-    std::shared_ptr<Frame> keyFrames;
+    boost::shared_mutex                  keyFramesMutex;
+    std::deque< std::shared_ptr<Frame> > keyFrames;
+
+
 };
 
 #endif // VOSYSTEM_H

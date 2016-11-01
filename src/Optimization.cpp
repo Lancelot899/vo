@@ -7,3 +7,13 @@
 Optimizater::Optimizater(OPT_TYPE optType)
 {
 }
+
+void Optimizater::forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame)
+{
+
+}
+
+void Optimizater::forKeyFrame(std::deque<std::shared_ptr<Frame> > keyFrames)
+{
+
+}

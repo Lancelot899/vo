@@ -1,6 +1,11 @@
 #ifndef OPTIMIZATION_H
 #define OPTIMIZATION_H
 
+#include <memory>
+#include <deque>
+
+class Frame;
+
 class Optimizater
 {
 public:
@@ -11,6 +16,9 @@ public:
     };
 
     Optimizater(OPT_TYPE optType = OPT_DEFAULT);
+    void forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame);
+    void forKeyFrame(std::deque<std::shared_ptr<Frame>> keyFrames);
+
 
 private:
 
