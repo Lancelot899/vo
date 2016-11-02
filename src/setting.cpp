@@ -37,18 +37,28 @@ public:
         cameraCV_.at<float>(1, 1) = camera_(1, 1) = fy;
         cameraCV_.at<float>(1, 2) = camera_(1, 2) = cy;
         cameraCV_.at<float>(2, 2) = camera_(2, 2) = 1.0f;
+
+        camInv_ = camera_.inverse();
+        camInvCV_ = cameraCV_.inv();
     }
 
     friend Eigen::Matrix3f& camera();
     friend cv::Mat& cameraCV();
+    friend Eigen::Matrix3f& camInv();
+    friend cv::Mat& camInvCV();
 
 private:
     static Eigen::Matrix3f camera_;
+    static Eigen::Matrix3f camInv_;
     static cv::Mat cameraCV_;
+    static cv::Mat camInvCV_;
 };
 
 Eigen::Matrix3f Camera::camera_;
 cv::Mat Camera::cameraCV_;
+Eigen::Matrix3f Camera::camInv_;
+cv::Mat Camera::camInvCV_;
+
 
 class Distortion {
 public:
@@ -158,4 +168,16 @@ void getConfigueParam(const char *cfgPath) {
 float getInitDepth()
 {
     return DepthRandom::getRandom()();
+}
+
+
+cv::Mat &camInvCV()
+{
+    return Camera::camInvCV_;
+}
+
+
+Eigen::Matrix3f &camInv()
+{
+    return Camera::camInv_;
 }

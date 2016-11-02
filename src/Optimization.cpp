@@ -10,6 +10,7 @@
 typedef Eigen::Matrix<float, 1, 6> Vector6fRow;
 
 struct Jac {
+    int i, j;
     float rij_bj;
     float rij_bi;
     float rij_ai;
@@ -17,6 +18,7 @@ struct Jac {
     float rij_di;
 
     Jac() {
+        i = j = -1;
         rij_bj = -1.0f;
         rij_bi = 0.0f;
         rij_ai = 0.0f;
@@ -75,32 +77,115 @@ struct JacKf {
 
 struct JacKff {
     Jac jac;
-    Vector6fRow rij_xij;
+    Vector6fRow rij_xji;
 
     JacKff() {
-        rij_xij.setOnes();
+        rij_xji.setOnes();
     }
 
     JacKff& operator *(float val) {
         jac *= val;
-        rij_xij *= val;
+        rij_xji *= val;
 
         return *this;
     }
 
     JacKff& operator *=(float val) {
         jac *= val;
-        rij_xij *= val;
+        rij_xji *= val;
 
         return *this;
     }
 };
 
-
-
-inline Jac calcJac(std::shared_ptr<Frame>& frame_i, std::shared_ptr<Frame>& frame_j, float ai, float aj, float bi, float bj) {
+inline Jac calcJac_p(int i, int j, float ti, float tj, float Ii, float di, float dj,
+                     int ui, int vi, float Iju,
+                     float Ijv, float ai, float aj, float bi, Sophus::SE3f &xji,
+                     float fx, float fy, float cx, float cy) {
     Jac jac;
+    jac.i = i; jac.j = j;
+    jac.rij_bi = tj * std::exp(aj) / ti / std::exp(ai);
+    jac.rij_ai = (Ii - bi) * tj * std::exp(aj) / ti / std::exp(ai);
+    jac.rij_aj = -(Ii - bi) * tj * std::exp(aj) / ti / std::exp(ai);
+    Eigen::Vector3f dleft(fx * Iju, fy * Ijv, cx * Iju + cy * Ijv);
+    Eigen::Vector3f dright((ui - cx) / fx, (vi - cy) / fy, 1);
+    dright.noalias() = xji.so3() * dright + xji.translation() / di;
+    jac.rij_di = dleft.dot(dright) / dj;
+    return jac;
+}
 
+JacKff calcJacForTracking(std::shared_ptr<Frame> frame_i, std::shared_ptr<Frame> frame_j, int u, int v, float ai, float aj, float bi, float _di_ = -1.0f) {
+    JacKff Jaccobi;
+    float ti = frame_i->exposureTime();
+    float tj = frame_j->exposureTime();
+    float Ii = frame_i->Image()[u * frame_i->height() + v];
+
+    float di = 0.0f;
+    if(_di_ < -0.5f) di = _di_;
+    else di = frame_i->getDepth(u, v);
+
+    Eigen::Vector3f pi = di * camInv() * Eigen::Vector3f(u, v, 1) ;
+    Sophus::SE3f xji = frame_j->pose() * frame_i->pose().inverse();
+    Eigen::Vector3f pj = xji.so3() * pi + xji.translation();
+    int uj = pj[0] / pj[2];
+    int vj = pj[1] / pj[2];
+    Eigen::Vector3f gradIj = frame_j->gradients()[uj * frame_j->height() + vj];
+
+    Jaccobi.jac = calcJac_p(frame_i->getID(), frame_j->getID(), ti, tj, Ii, di, pj[2], u, v,
+            gradIj[0], gradIj[1], ai, aj, bi, xji,
+            frame_i->fx(), frame_i->fy(), frame_i->cx(), frame_i->cy());
+
+    Jaccobi.rij_xji(0, 0) = frame_i->fx() / di * gradIj[0];
+    Jaccobi.rij_xji(0, 1) = frame_i->fy() / di * gradIj[1];
+    Jaccobi.rij_xji(0, 2) = -(pi[1] * frame_i->fy() * gradIj[1] + pi[0] * frame_i->fy() * gradIj[0]) / di / di;
+    Jaccobi.rij_xji(0, 3) = frame_i->fy() * gradIj[1] + pi[1] / pi[2] / pi[2] * (pi[0] * frame_i->fx() * gradIj[0] + pi[1] * frame_i->fy() * gradIj[1]);
+    Jaccobi.rij_xji(0, 4) = -frame_i->fx() * gradIj[0] - pi[0] / pi[2] / pi[2] * (pi[0] * frame_i->fx() * gradIj[0] + pi[1] * frame_i->fy() * gradIj[1]);
+    Jaccobi.rij_xji(0, 5) = (pi[1] * frame_i->fy() * gradIj[0] - pi[0] * frame_i->fx() * gradIj[1]) / pi[2];
+
+    return Jaccobi;
+}
+
+JacKf calcJacForOpt(std::shared_ptr<Frame> frame_i, std::shared_ptr<Frame> frame_j, int u, int v, float ai, float aj, float bi, float _di_ = -1.0f) {
+    JacKf Jaccobi;
+    float ti = frame_i->exposureTime();
+    float tj = frame_j->exposureTime();
+    float Ii = frame_i->Image()[u * frame_i->height() + v];
+
+    float di = 0.0f;
+    if(_di_ < -0.5f) di = _di_;
+    else di = frame_i->getDepth(u, v);
+
+    Eigen::Vector3f pi = di * camInv() * Eigen::Vector3f(u, v, 1) ;
+    Sophus::SE3f xji = frame_j->pose() * frame_i->pose().inverse();
+    Eigen::Vector3f pj = xji.so3() * pi + xji.translation();
+    int uj = pj[0] / pj[2];
+    int vj = pj[1] / pj[2];
+    Eigen::Vector3f gradIj = frame_j->gradients()[uj * frame_j->height() + vj];
+
+    Jaccobi.jac = calcJac_p(frame_i->getID(), frame_j->getID(), ti, tj, Ii, di, pj[2], u, v,
+            gradIj[0], gradIj[1], ai, aj, bi, xji,
+            frame_i->fx(), frame_i->fy(), frame_i->cx(), frame_i->cy());
+
+    Vector6fRow rij_xji;
+
+    rij_xji(0, 0) = frame_i->fx() / di * gradIj[0];
+    rij_xji(0, 1) = frame_i->fy() / di * gradIj[1];
+    rij_xji(0, 2) = -(pi[1] * frame_i->fy() * gradIj[1] + pi[0] * frame_i->fy() * gradIj[0]) / di / di;
+    rij_xji(0, 3) = frame_i->fy() * gradIj[1] + pi[1] / pi[2] / pi[2] * (pi[0] * frame_i->fx() * gradIj[0] + pi[1] * frame_i->fy() * gradIj[1]);
+    rij_xji(0, 4) = -frame_i->fx() * gradIj[0] - pi[0] / pi[2] / pi[2] * (pi[0] * frame_i->fx() * gradIj[0] + pi[1] * frame_i->fy() * gradIj[1]);
+    rij_xji(0, 5) = (pi[1] * frame_i->fy() * gradIj[0] - pi[0] * frame_i->fx() * gradIj[1]) / pi[2];
+
+    Eigen::Matrix<float, 6, 6> mathJ;
+    mathJ.block(0, 0, 3, 3) = Sophus::SO3f::hat(xji.so3().log());
+    mathJ.block(0, 3, 3, 3) = Sophus::SO3f::hat(xji.translation());
+    mathJ.block(3, 0, 3, 3) = Eigen::Matrix3f::Zero(3, 3);
+    mathJ.block(3, 3, 3, 3) = Sophus::SO3f::hat(xji.so3().log());
+    mathJ = 0.5 * mathJ + Eigen::Matrix<float, 6, 6>::Identity();
+
+    Jaccobi.rij_xi.noalias() = rij_xji * mathJ * frame_i->pose().inverse().Adj();
+    Jaccobi.rij_xj.noalias() = -rij_xji * mathJ * frame_i->pose().inverse().Adj();
+
+    return Jaccobi;
 }
 
 
