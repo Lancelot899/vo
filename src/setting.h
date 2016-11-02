@@ -11,6 +11,8 @@
 
 Eigen::Matrix3f& camera();
 cv::Mat& cameraCV();
+Eigen::Matrix3f &camInv();
+cv::Mat& camInvCV();
 Eigen::Matrix<float, 5, 1>& camDistortion();
 cv::Mat& camDistortionCV();
 

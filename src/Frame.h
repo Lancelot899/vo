@@ -49,6 +49,7 @@ struct voPoint {
         depth = oth.depth;
         this->obsFrame.assign(oth.obsFrame.begin(), oth.obsFrame.end());
         this->obsCoords.assign(oth.obsCoords.begin(), oth.obsCoords.end());
+        this->neighber.assign(oth.neighber.begin(), oth.neighber.end());
         isDepthBusy = false;
     }
 
@@ -58,6 +59,7 @@ struct voPoint {
     float depth;
     std::vector< std::shared_ptr<Frame> > obsFrame;
     std::vector< cv::Point2i > obsCoords;
+    std::vector< cv::Point2f > neighber;
 };
 
 
@@ -82,13 +84,13 @@ public:
     float fy() { return fy_; }
     float cx() { return cx_; }
     float cy() { return cy_; }
-    float height() { return height_[4]; }
-    float width() { return width_[4]; }
+     int  height() { return height_[4]; }
+     int  width() { return width_[4]; }
     const Sophus::SE3f &pose();
     float exposureTime();
-    const float *Image(int i);
-    const Eigen::Vector3f* gradients(int i);
-    const float* maxGradients(int i);
+    const float *Image(int i = 0);
+    const Eigen::Vector3f* gradients(int i = 0);
+    const float* maxGradients(int i = 0);
 
 private:
     int id;
