@@ -59,7 +59,7 @@ struct voPoint {
     float depth;
     std::vector< std::shared_ptr<Frame> > obsFrame;
     std::vector< cv::Point2i > obsCoords;
-    std::vector< cv::Point2f > neighber;
+    std::vector< cv::Point2i > neighber;
 };
 
 
@@ -91,9 +91,14 @@ public:
     const float *Image(int i = 0);
     const Eigen::Vector3f* gradients(int i = 0);
     const float* maxGradients(int i = 0);
+    float a() {return a_; }
+    float b() {return b_; }
+    void setA(float a) {a_ = a;}
+    void setB(float b) {b_ = b;}
 
 private:
     int id;
+    std::atomic<float> a_, b_;
     float fx_, fy_, cx_, cy_;
     cv::Mat rgbImg;
     float *image[5];

@@ -5,6 +5,7 @@
 Frame::Frame()
 {
     id = -1;
+    a_ = b_ = 1.0f;
     cv::Mat K = cameraCV();
     fx_ = K.at<float>(0, 0);
     fy_ = K.at<float>(1, 1);
@@ -19,6 +20,7 @@ Frame::Frame()
 
 Frame::Frame(int id, cv::Mat img, float exposureTime)
 {
+    a_ = b_ = 1.0f;
     isPoseBusy = false;
     this->id = id;
     cv::Mat K = cameraCV();
@@ -41,6 +43,7 @@ Frame::Frame(int id, cv::Mat img, float exposureTime)
 
 Frame::Frame(int id, cv::Mat img, float exposureTime, Sophus::SE3f &pose)
 {
+    a_ = b_ = 1.0f;
     isPoseBusy = false;
     this->id = id;
     cv::Mat K = cameraCV();
@@ -63,6 +66,7 @@ Frame::Frame(int id, cv::Mat img, float exposureTime, Sophus::SE3f &pose)
 
 Frame::Frame(int id, cv::Mat img, float exposureTime, std::map<int, voPoint> obsPoints)
 {
+    a_ = b_ = 1.0f;
     isPoseBusy = false;
     this->id = id;
     cv::Mat K = cameraCV();
@@ -86,6 +90,7 @@ Frame::Frame(int id, cv::Mat img, float exposureTime, std::map<int, voPoint> obs
 
 Frame::Frame(int id, cv::Mat img, float exposureTime, Sophus::SE3f &pose, std::map<int, voPoint> obsPoints)
 {
+    a_ = b_ = 1.0f;
     isPoseBusy = false;
     this->id = id;
     cv::Mat K = cameraCV();
