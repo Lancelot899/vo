@@ -1,3 +1,5 @@
+#include <thread>
+
 #include <Eigen/Dense>
 
 #include <sophus/se3.hpp>
@@ -8,6 +10,72 @@
 #include "Frame.h"
 
 typedef Eigen::Matrix<float, 1, 6> Vector6fRow;
+typedef Eigen::Matrix<float, 6, 6> HType;
+typedef Eigen::Matrix<float, 6, 1> ErrType;
+
+
+struct Hessian_ {
+    HType Hii;
+    HType Hij;
+    HType Hji;
+    HType Hjj;
+    ErrType ei;
+    ErrType ej;
+    Hessian_() {
+        Hii.setOnes();
+        Hij.setOnes();
+        Hji.setOnes();
+        Hjj.setOnes();
+        ei.setOnes();
+        ej.setOnes();
+    }
+
+    Hessian_& operator +=(Hessian_& oth) {
+        Hii += oth.Hii;
+        Hij += oth.Hij;
+        Hji += oth.Hji;
+        Hjj += oth.Hjj;
+        ei  += oth.ei;
+        ej  += oth.ej;
+
+        return *this;
+    }
+
+    Hessian_& operator =(Hessian_& oth) {
+        Hii = oth.Hii;
+        Hij = oth.Hij;
+        Hji = oth.Hji;
+        Hjj = oth.Hjj;
+        ei  = oth.ei;
+        ej  = oth.ej;
+
+        return *this;
+    }
+};
+
+struct HessianBlock {
+    int  i;
+    int  j;
+    Hessian_ hessian;
+    HessianBlock(int i, int j) {
+        this->i = i;
+        this->j = j;
+    }
+
+    HessianBlock() = delete;
+
+    HessianBlock(HessianBlock& oth) {
+        i = oth.i;
+        j = oth.j;
+        hessian = oth.hessian;
+    }
+
+    HessianBlock& operator +=(HessianBlock& oth) {
+        hessian += oth.hessian;
+        return *this;
+    }
+
+};
 
 struct Jac {
     int i, j;
@@ -145,6 +213,9 @@ JacKff calcJacForTracking(std::shared_ptr<Frame> frame_i, std::shared_ptr<Frame>
     return Jaccobi;
 }
 
+
+
+
 JacKf calcJacForOpt(std::shared_ptr<Frame> frame_i, std::shared_ptr<Frame> frame_j, int u, int v, float ai, float aj, float bi, float _di_ = -1.0f) {
     JacKf Jaccobi;
     float ti = frame_i->exposureTime();
@@ -188,6 +259,22 @@ JacKf calcJacForOpt(std::shared_ptr<Frame> frame_i, std::shared_ptr<Frame> frame
     return Jaccobi;
 }
 
+inline Hessian_ calcBlockForTracking(JacKff& jac) {
+    Hessian_ hessian;
+
+    return hessian;
+}
+
+void BuildBlockAtPointTracking(int u, int v, std::shared_ptr<Frame> framei, std::shared_ptr<Frame> framej, HessianBlock &block) {
+    auto it = framei->obsPoints().find(u * framei->height() + v);
+    if(it == framei->obsPoints().end())
+        return;
+
+    while(it->second.isDepthBusy) std::this_thread::yield();
+    JacKff jac = calcJacForTracking(framei, framej, u, v, framei->a(), framej->a(), framei->b(), it->second.depth);
+    const std::vector< cv::Point2i > &neighber = it->second.neighber;
+
+}
 
 class OptimizaterImpl {
 public:
@@ -196,6 +283,7 @@ public:
 };
 
 bool OptimizaterImpl::forTracking(std::shared_ptr<Frame> kFrame, std::shared_ptr<Frame> frame, float ai, float aj, float bi, float bj) {
+
     return true;
 }
 
